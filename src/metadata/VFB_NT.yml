@@ -1,0 +1,28 @@
+# PURL configuration for http://purl.obolibrary.org/obo/VFB_NT
+
+idspace: VFB_NT
+base_url: /obo/VFB_NT
+
+products:
+- VFB_NT.owl: https://raw.githubusercontent.com/VirtualFlyBrain/vfb-neurotransmitter-predictions/main/VFB_NT.owl
+- VFB_NT.obo: https://raw.githubusercontent.com/VirtualFlyBrain/vfb-neurotransmitter-predictions/main/VFB_NT.obo
+
+term_browser: ontobee
+example_terms:
+- VFB_NT_0000000
+
+entries:
+
+- prefix: /releases/
+  replacement: https://raw.githubusercontent.com/VirtualFlyBrain/vfb-neurotransmitter-predictions/v
+
+- prefix: /tracker/
+  replacement: https://github.com/VirtualFlyBrain/vfb-neurotransmitter-predictions/issues
+
+- prefix: /about/
+  replacement: http://www.ontobee.org/ontology/VFB_NT?iri=http://purl.obolibrary.org/obo/
+
+## generic fall-through, serve direct from github by default
+- prefix: /
+  replacement: https://raw.githubusercontent.com/VirtualFlyBrain/vfb-neurotransmitter-predictions/main/
+
