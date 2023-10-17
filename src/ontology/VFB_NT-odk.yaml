@@ -1,4 +1,16 @@
 id: VFB_NT
-title: VFB Neurotransmitter Predictions
+title: "VFB Neurotransmitter Predictions"
 github_org: VirtualFlyBrain
 repo: vfb-neurotransmitter-predictions
+namespaces: 
+  - http://virtualflybrain.org/reports/VFB_
+release_artefacts: 
+  - base
+  - simple
+  - non-classified
+  - full
+primary_release: full
+edit_format: owl
+robot_java_args: '-Xmx8G'
+allow_equivalents: none
+release_date: TRUE
