@@ -8,6 +8,7 @@ bin/
 *.tmp.json
 
 .github/token.txt
+np_token.txt
 
 src/ontology/mirror
 src/ontology/mirror/*
