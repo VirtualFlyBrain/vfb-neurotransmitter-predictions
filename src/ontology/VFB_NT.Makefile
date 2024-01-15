@@ -5,13 +5,14 @@
 
 # accessing neuprint requires a token - save in a single line in a text file and specify path with this variable 
 NEUPRINT_TOKEN_FILE = '../../np_token.txt'
+CUTOFF = 0.5
 
 .PHONY: install_modules
 install_modules:
 	python3 -m pip install -r $(SCRIPTSDIR)/requirements.txt
 
 $(SRC): install_modules | $(TMPDIR)
-	python3 $(SCRIPTSDIR)/make_neuprint_template.py $(NEUPRINT_TOKEN_FILE) 'manc:v1.0' &&\
+	python3 $(SCRIPTSDIR)/make_neuprint_template.py $(CUTOFF) $(NEUPRINT_TOKEN_FILE) 'manc:v1.0' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/manc_nt_predictions.owl &&\
 	$(ROBOT) merge --inputs "$(TMPDIR)/*_nt_predictions.owl" \

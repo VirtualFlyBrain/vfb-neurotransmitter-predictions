@@ -3,8 +3,9 @@ from vfb_connect.neo.neo4j_tools import Neo4jConnect, dict_cursor
 import pandas as pd
 import sys
 
-np_dataset = sys.argv[2]
-with open(sys.argv[1]) as file:
+cutoff = float(sys.argv[1])
+np_dataset = sys.argv[3]
+with open(sys.argv[2]) as file:
     token = file.read()
 
 template_outfile = 'tmp/template.tsv'
@@ -36,8 +37,22 @@ data['GABA'] = 'GO:0061534'
 data['Glut'] = 'GO:0061535'
 
 data = data[['iri', 'type', 'Ach', 'Ach_prob', 'GABA', 'GABA_prob', 'Glut', 'Glut_prob']]
-data
 
+# filter by cutoff value
+def filter_on_cutoff(row, columns, prob_cutoff=cutoff):
+    for col in columns:
+        prob_col = f'{col}_prob'
+        if row[prob_col] <= prob_cutoff:
+            row[col] = ''
+            row[prob_col] = ''
+    return row
+
+neurotransmitter_cols = ['Ach', 'GABA', 'Glut']
+filtered_data = data.apply(filter_on_cutoff, axis=1, columns=neurotransmitter_cols)
+# remove any rows with no NT data
+filtered_data = filtered_data[filtered_data[neurotransmitter_cols].apply(lambda x: ''.join(map(str, x)) != '', axis=1)]
+
+# make template
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'Ach': ['SC RO:0002215 some %'], 
                                  'Ach_prob': ['>AT custom:confidence_value^^xsd:float'],
@@ -55,5 +70,5 @@ typed_entities = pd.DataFrame({'iri': ['RO:0002215', 'GO:0014055', 'GO:0061534',
                                  'Glut': ['','','','',''], 
                                  'Glut_prob': ['','','','','']})
                                  
-template = pd.concat([template_strings, data, typed_entities])
+template = pd.concat([template_strings, filtered_data, typed_entities])
 template.to_csv(template_outfile, index=None, sep='\t')
