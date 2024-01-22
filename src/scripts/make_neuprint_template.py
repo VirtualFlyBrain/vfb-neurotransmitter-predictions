@@ -46,15 +46,18 @@ data['NT'] = data['NT'].map(nt_dict)
 
 # make template
 data['type'] = 'owl:Class'
+data['ref'] = 'doi:10.1101/2023.06.05.543757'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 
-                                 'NT_prob': ['>AT custom:confidence_value^^xsd:float']})
+                                 'NT_prob': ['>AT custom:confidence_value^^xsd:float'],
+                                 'ref': ['>A oboInOwl:hasDbXref']})
 
 typed_entities = pd.DataFrame({'iri': ['RO:0002215', 'GO:0014055', 'GO:0061534', 'GO:0061535', 'custom:confidence_value'], 
                                'type': ['owl:ObjectProperty', 'owl:Class', 'owl:Class', 'owl:Class', 'owl:AnnotationProperty'],
                                  'NT': ['','','','',''], 
-                                 'NT_prob': ['','','','','']})
+                                 'NT_prob': ['','','','',''],
+                                 'ref': ['','','','','']})
                                  
 template = pd.concat([template_strings, data, typed_entities])
 template.to_csv(template_outfile, index=None, sep='\t')
