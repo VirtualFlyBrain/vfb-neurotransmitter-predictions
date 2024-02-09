@@ -14,7 +14,7 @@ np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, 
 vfb_client = Neo4jConnect('http://kb.virtualflybrain.org', 'neo4j', 'vfb')
 
 # get predicted neurotransmitters
-query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre > %s '
+query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
          'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob'
          % cutoff)
 
@@ -27,10 +27,10 @@ query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
 
 q = vfb_client.commit_list([query])
 result = dict_cursor(q)
-manc_vfb_ids = pd.DataFrame.from_records(result)
+vfb_ids = pd.DataFrame.from_records(result)
 
 # merge nts with VFB IDs
-data = manc_vfb_ids.join(neurotransmitters, 
+data = vfb_ids.join(neurotransmitters, 
                          on='bodyId', how='inner', 
                          validate='one_to_one'
                         ).reset_index(drop=True)
