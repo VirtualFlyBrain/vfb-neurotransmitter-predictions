@@ -16,7 +16,7 @@ $(SRC): install_modules | $(TMPDIR)
 	python3 $(SCRIPTSDIR)/make_neuprint_template.py $(CUTOFF) $(NEUPRINT_TOKEN_FILE) 'manc:v1.0' 'neuprint_JRC_Manc' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/manc_nt_predictions.owl &&\
-	python3 $(SCRIPTSDIR)/make_hemibrain_template.py $(CUTOFF) 'neuprint_JRC_Hemibrain_1point1' &&\
+	python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'neuprint_JRC_Hemibrain_1point1'  'data/hemibrain_predictions.tsv' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/hb_nt_predictions.owl &&\
 	$(ROBOT) merge --inputs "$(TMPDIR)/*_nt_predictions.owl" \
