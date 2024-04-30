@@ -23,6 +23,7 @@ neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
 # get VFB individuals
 query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
          '(s:Site {short_form:"%s"}) '
+         'WHERE ((NOT EXISTS(n.deprecated)) OR (NOT n.deprecated[0]))'
          'RETURN n.iri AS iri, toInteger(r.accession[0]) AS bodyId' % vfb_site)
 
 q = vfb_client.commit_list([query])

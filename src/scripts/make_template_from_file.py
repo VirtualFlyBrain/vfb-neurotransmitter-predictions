@@ -6,9 +6,10 @@ import sys
 
 cutoff = float(sys.argv[1])
 vfb_site = sys.argv[2]
+infile = sys.argv[3]
 
 template_outfile = 'tmp/template.tsv'
-neurotransmitters = pd.read_csv("data/hemibrain_predictions.tsv", sep='\t').set_index('bodyId')
+neurotransmitters = pd.read_csv(infile, sep='\t', index_col='accession', low_memory=False)
 vfb_client = Neo4jConnect('http://kb.virtualflybrain.org', 'neo4j', 'vfb')
 
 neurotransmitters = neurotransmitters[neurotransmitters['pre']>=cutoff]
@@ -18,7 +19,8 @@ neurotransmitters.drop(['pre', 'top_nt', 'top_nt_p', 'acetylcholine', 'glutamate
 # get VFB individuals
 query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
          '(s:Site {short_form:"%s"}) '
-         'RETURN n.iri AS iri, toInteger(r.accession[0]) AS bodyId' % vfb_site)
+         'WHERE ((NOT EXISTS(n.deprecated)) OR (NOT n.deprecated[0]))'
+         'RETURN n.iri AS iri, toInteger(r.accession[0]) AS accession' % vfb_site)
 
 q = vfb_client.commit_list([query])
 result = dict_cursor(q)
@@ -26,10 +28,10 @@ vfb_ids = pd.DataFrame.from_records(result)
 
 # merge nts with VFB IDs
 data = vfb_ids.join(neurotransmitters, 
-                         on='bodyId', how='inner', 
+                         on='accession', how='inner', 
                          validate='one_to_one'
                         ).reset_index(drop=True)
-data = data.drop('bodyId', axis=1)
+data = data.drop('accession', axis=1)
 
 
 # replace NT name with GO term
