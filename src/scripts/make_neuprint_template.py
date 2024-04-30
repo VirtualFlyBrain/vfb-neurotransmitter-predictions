@@ -6,19 +6,30 @@ import sys
 cutoff = float(sys.argv[1])
 np_dataset = sys.argv[3]
 vfb_site = sys.argv[4]
-with open(sys.argv[2]) as file:
-    token = file.read()
+
+try:
+    with open(sys.argv[2]) as file:
+        token = file.read()
+    update = True
+except FileNotFoundError:
+    update = False
 
 template_outfile = 'tmp/template.tsv'
-np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
+
 vfb_client = Neo4jConnect('http://kb.virtualflybrain.org', 'neo4j', 'vfb')
 
-# get predicted neurotransmitters
-query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
-         'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob'
-         % cutoff)
+if update:
+    np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
+    # get predicted neurotransmitters
+    query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
+             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob'
+             % cutoff)
 
-neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
+    neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
+    neurotransmitters.to_csv(f'data/{vfb_site}_download.tsv', sep='\t')
+
+else:
+    neurotransmitters = pd.read_csv(f'data/{vfb_site}_download.tsv', sep='\t', index_col='bodyId')
 
 # get VFB individuals
 query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
