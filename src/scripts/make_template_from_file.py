@@ -47,7 +47,7 @@ data['NT'] = data['NT'].map(nt_dict)
 
 # make template
 data['type'] = 'owl:Class'
-if vfb_site == 'neuprint_JRC_Hemibrain_1point1' or 'Dorkenwald2023':
+if vfb_site == 'neuprint_JRC_Hemibrain_1point1' or 'flywire783':
     data['ref'] = 'FlyBase:FBrf0259490'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
