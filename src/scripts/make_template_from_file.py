@@ -47,7 +47,8 @@ data['NT'] = data['NT'].map(nt_dict)
 
 # make template
 data['type'] = 'owl:Class'
-data['ref'] = 'doi:10.1101/2020.06.12.148775'
+if vfb_site == 'neuprint_JRC_Hemibrain_1point1' or 'Dorkenwald2023':
+    data['ref'] = 'FlyBase:FBrf0259490'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 
