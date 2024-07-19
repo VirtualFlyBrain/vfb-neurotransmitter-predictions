@@ -22,7 +22,8 @@ if update:
     np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
     # get predicted neurotransmitters
     query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
-             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob'
+             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob '
+             'ORDER BY bodyId'
              % cutoff)
 
     neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
@@ -58,7 +59,7 @@ data['NT'] = data['NT'].map(nt_dict)
 
 # make template
 data['type'] = 'owl:Class'
-if np_dataset=='manc:v1.0':
+if np_dataset=='manc:v1.2.1':
     data['ref'] = 'doi:10.1101/2023.06.05.543757'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
