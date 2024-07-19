@@ -2,10 +2,6 @@
 ![Build Status](https://github.com/VirtualFlyBrain/vfb-neurotransmitter-predictions/workflows/CI/badge.svg)
 # VFB Neurotransmitter Predictions
 
-Description: None
-
-More information can be found at http://obofoundry.org/ontology/VFB_NT
-
 ## Versions
 
 ### Stable release versions
@@ -26,4 +22,4 @@ Please use this GitHub repository's [Issue tracker](https://github.com/VirtualFl
 
 This ontology repository was created using the [Ontology Development Kit (ODK)](https://github.com/INCATools/ontology-development-kit).
 
-Data for neurotransmitter predictions is taken from neuprint manc:v1.0 dataset.
+Data for neurotransmitter predictions is taken from [neuprint](http://neuprint.janelia.org/) or from Eckstein et al. (2024) - [FBrf0259490](http://flybase.org/reports/FBrf0259490).
