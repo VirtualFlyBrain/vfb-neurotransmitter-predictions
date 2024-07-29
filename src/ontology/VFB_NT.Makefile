@@ -8,7 +8,7 @@
 NEUPRINT_TOKEN_FILE = '../../np_token.txt'
 # threshold number of presynapses (we do not filter by probability) 
 # Eckstein (2024) analysis filters to >=100 already
-CUTOFF = 0
+CUTOFF = 100
 
 .PHONY: install_modules
 install_modules:
