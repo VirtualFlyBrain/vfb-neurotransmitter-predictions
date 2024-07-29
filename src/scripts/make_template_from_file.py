@@ -53,7 +53,7 @@ if vfb_site == 'neuprint_JRC_Hemibrain_1point1' or 'flywire783':
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 
                                  'NT_prob': ['>AT custom:confidence_value^^xsd:float'],
-                                 'ref': ['>A oboInOwl:hasDbXref']})
+                                 'ref': ['>A oboInOwl:hasDbXref SPLIT=|'']})
 
 extra_entities = ['RO:0002215', 'custom:confidence_value']
 extra_entities.extend(list(nt_dict.values()))

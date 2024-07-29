@@ -60,12 +60,12 @@ data['NT'] = data['NT'].map(nt_dict)
 # make template
 data['type'] = 'owl:Class'
 if np_dataset=='manc:v1.2.1':
-    data['ref'] = 'FlyBase:FBrf0259490'
+    data['ref'] = 'FlyBase:FBrf0259490|doi:10.1101/2023.06.05.543757'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 
                                  'NT_prob': ['>AT custom:confidence_value^^xsd:float'],
-                                 'ref': ['>A oboInOwl:hasDbXref']})
+                                 'ref': ['>A oboInOwl:hasDbXref SPLIT=|']})
 
 extra_entities = ['RO:0002215', 'custom:confidence_value']
 extra_entities.extend(list(nt_dict.values()))
