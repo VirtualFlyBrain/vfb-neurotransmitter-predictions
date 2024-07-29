@@ -60,7 +60,7 @@ data['NT'] = data['NT'].map(nt_dict)
 # make template
 data['type'] = 'owl:Class'
 if np_dataset=='manc:v1.2.1':
-    data['ref'] = 'doi:10.1101/2023.06.05.543757'
+    data['ref'] = 'FlyBase:FBrf0259490'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 

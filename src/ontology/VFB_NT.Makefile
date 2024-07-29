@@ -6,8 +6,9 @@
 # accessing neuprint requires a token - save in a single line in a text file and specify path with this variable
 # if no token is found, neuprint data will not be updated
 NEUPRINT_TOKEN_FILE = '../../np_token.txt'
-# threshold number of presynapses (we do not filter by probability)
-CUTOFF = 100
+# threshold number of presynapses (we do not filter by probability) 
+# Eckstein (2024) analysis filters to >=100 already
+CUTOFF = 0
 
 .PHONY: install_modules
 install_modules:
