@@ -22,7 +22,8 @@ if update:
     np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
     # get predicted neurotransmitters
     query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
-             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob'
+             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob '
+             'ORDER BY bodyId'
              % cutoff)
 
     neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
@@ -58,15 +59,16 @@ data['NT'] = data['NT'].map(nt_dict)
 
 # make template
 data['type'] = 'owl:Class'
+
 if np_dataset=='manc:v1.0':
-    data['ref'] = 'doi:10.1101/2023.06.05.543757'
+    data['ref'] = 'FlyBase:FBrf0259490|doi:10.1101/2023.06.05.543757'
 if np_dataset=='optic-lobe:v1.0':
-    data['ref'] = 'doi:10.1101/2024.04.16.589741'
+    data['ref'] = 'FlyBase:FBrf0259490|doi:10.1101/2024.04.16.589741'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 
                                  'NT_prob': ['>AT custom:confidence_value^^xsd:float'],
-                                 'ref': ['>A oboInOwl:hasDbXref']})
+                                 'ref': ['>A oboInOwl:hasDbXref SPLIT=|']})
 
 extra_entities = ['RO:0002215', 'custom:confidence_value']
 extra_entities.extend(list(nt_dict.values()))
