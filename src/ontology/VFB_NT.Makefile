@@ -31,6 +31,7 @@ $(SRC): install_modules | $(TMPDIR)
 		--input VFB_NT-annotations.ofn \
 		--output $(SRC) &&\
 	python3 $(SCRIPTSDIR)/modify_owl.py $(SRC) &&\
+	$(ROBOT) convert -i $(SRC) -o $(SRC).gz -f owl &&\
 	rm $(TMPDIR)/*_nt_predictions.owl &&\
 	echo "\nOntology source file updated!\n"
 
