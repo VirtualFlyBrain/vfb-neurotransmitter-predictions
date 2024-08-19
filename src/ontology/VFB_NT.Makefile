@@ -24,10 +24,14 @@ $(SRC): install_modules | $(TMPDIR)
 	python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'neuprint_JRC_Hemibrain_1point1'  'data/hemibrain_predictions.tsv' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/hb_nt_predictions.owl &&\
+	python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'flywire783' 'data/flywire_predictions.tsv' &&\
+	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
+		--output $(TMPDIR)/fw_nt_predictions.owl &&\
 	$(ROBOT) merge --inputs "$(TMPDIR)/*_nt_predictions.owl" \
 		--input VFB_NT-annotations.ofn \
 		--output $(SRC) &&\
 	python3 $(SCRIPTSDIR)/modify_owl.py $(SRC) &&\
+	$(ROBOT) convert -i $(SRC) -o $(SRC).gz -f owl &&\
 	rm $(TMPDIR)/*_nt_predictions.owl &&\
 	echo "\nOntology source file updated!\n"
 

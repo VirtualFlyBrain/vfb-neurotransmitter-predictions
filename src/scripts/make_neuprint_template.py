@@ -36,6 +36,9 @@ if update:
 else:
     neurotransmitters = pd.read_csv(f'data/{vfb_site}_download.tsv', sep='\t', index_col='bodyId')
 
+# drop anything that is missing a confidence value
+neurotransmitters = neurotransmitters[~neurotransmitters['NT_prob'].isna()]
+
 # get VFB individuals
 query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
          '(s:Site {short_form:"%s"}) '
@@ -54,11 +57,13 @@ data = vfb_ids.join(neurotransmitters,
 data = data.drop('bodyId', axis=1)
 
 # replace NT name with GO term
-data = data[data['NT']!='unknown']
 nt_dict = {'acetylcholine':'GO:0014055', 
            'glutamate':'GO:0061535', 
-           'gaba':'GO:0061534'}
-
+           'gaba':'GO:0061534', 
+           'dopamine':'GO:0061527', 
+           'serotonin':'GO:0060096', 
+           'octopamine':'GO:0061540'}
+data = data[data['NT'].isin(nt_dict.keys())]
 data['NT'] = data['NT'].map(nt_dict)
 
 # make template
