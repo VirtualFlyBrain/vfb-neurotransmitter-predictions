@@ -10,7 +10,7 @@
 # More information: https://github.com/INCATools/ontology-development-kit/
 
 # Fingerprint of the configuration file when this Makefile was last generated
-CONFIG_HASH=                e663b2d40c7b6957ba11662559dd3dddd193f8af43f27e4c94b0e68ba6bd926d
+CONFIG_HASH=                9b09a5d546e8f8ca7d8854505165466d05950829b9e627813ae202c4da0a0348
 
 
 # ----------------------------------------
@@ -60,7 +60,7 @@ EDIT_PREPROCESSED =         $(TMPDIR)/$(ONT)-preprocess.owl
 
 FORMATS = $(sort  owl owl)
 FORMATS_INCL_TSV = $(sort $(FORMATS) tsv)
-RELEASE_ARTEFACTS = $(sort $(ONT)-base $(ONT)-full )
+RELEASE_ARTEFACTS = $(sort $(ONT)-full $(ONT)-base )
 
 ifeq ($(ODK_DEBUG),yes)
 ODK_DEBUG_FILE = debug.log
@@ -148,7 +148,7 @@ $(ROBOT_PLUGINS_DIRECTORY)/%.jar:
 # ----------------------------------------
 
 MAIN_PRODUCTS = $(sort $(foreach r,$(RELEASE_ARTEFACTS), $(r)) $(ONT))
-MAIN_GZIPPED  = 
+MAIN_GZIPPED  = $(foreach f,$(FORMATS), $(ONT).$(f).gz)
 MAIN_FILES    = $(foreach n,$(MAIN_PRODUCTS), $(foreach f,$(FORMATS), $(n).$(f))) $(MAIN_GZIPPED)
 SRCMERGED     = $(TMPDIR)/merged-$(SRC)
 
@@ -454,6 +454,8 @@ SHARED_ROBOT_COMMANDS =
 $(ONTOLOGYTERMS): $(SRCMERGED)
 	$(ROBOT) query -f csv -i $< --query ../sparql/VFB_NT_terms.sparql $@
 
+$(ONT).owl.gz: $(ONT).owl
+	gzip -c $< > $@.tmp && mv $@.tmp $@
 # ROBOT pipeline that merges imports, including components.
 ROBOT_RELEASE_IMPORT_MODE=$(ROBOT) merge --input $< 
 
