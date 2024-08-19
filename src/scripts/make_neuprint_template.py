@@ -21,12 +21,16 @@ vfb_client = Neo4jConnect('http://kb.virtualflybrain.org', 'neo4j', 'vfb')
 if update:
     np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
     # get predicted neurotransmitters
+    # confidence has different name in manc and ol...
     query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
-             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob '
+             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob1, '
+             'n.predictedNtConfidence AS NT_prob2 '
              'ORDER BY bodyId'
-             % cutoff)
-
+             % str(cutoff))
+    
     neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
+    neurotransmitters['NT_prob'] = neurotransmitters['NT_prob1'].fillna(neurotransmitters['NT_prob2'])
+    neurotransmitters = neurotransmitters.drop(['NT_prob1', 'NT_prob2'], axis=1)
     neurotransmitters.to_csv(f'data/{vfb_site}_download.tsv', sep='\t')
 
 else:
@@ -59,8 +63,11 @@ data['NT'] = data['NT'].map(nt_dict)
 
 # make template
 data['type'] = 'owl:Class'
-if np_dataset=='manc:v1.2.1':
+
+if np_dataset=='manc:v1.0':
     data['ref'] = 'FlyBase:FBrf0259490|doi:10.1101/2023.06.05.543757'
+if np_dataset=='optic-lobe:v1.0':
+    data['ref'] = 'FlyBase:FBrf0259490|doi:10.1101/2024.04.16.589741'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 
