@@ -16,6 +16,9 @@ neurotransmitters = neurotransmitters[neurotransmitters['pre']>=cutoff]
 neurotransmitters.rename({'conf_nt': 'NT', 'conf_nt_p': 'NT_prob'}, axis=1, inplace=True)
 neurotransmitters.drop(['pre', 'top_nt', 'top_nt_p', 'acetylcholine', 'glutamate', 'gaba', 'dopamine', 'serotonin', 'octopamine'], axis=1, inplace=True)
 
+# drop anything that is missing a confidence value
+neurotransmitters = neurotransmitters[~neurotransmitters['NT_prob'].isna()]
+
 # get VFB individuals
 query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
          '(s:Site {short_form:"%s"}) '
