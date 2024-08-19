@@ -1,2 +1,2 @@
 neuprint-python
-vfb-connect
+vfb-connect==1.6.0
