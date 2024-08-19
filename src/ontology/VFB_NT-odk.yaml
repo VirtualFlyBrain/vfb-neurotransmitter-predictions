@@ -6,10 +6,8 @@ robot_report:
   custom_profile: TRUE
 namespaces: 
   - http://virtualflybrain.org/reports/VFB_
-release_artefacts: 
-  - base
-  - full
 primary_release: full
+gzip_main: TRUE
 export_formats:
   - owl
 edit_format: owl
