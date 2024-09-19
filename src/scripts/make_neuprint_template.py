@@ -71,7 +71,7 @@ data['type'] = 'owl:Class'
 
 if np_dataset=='manc:v1.0':
     data['ref'] = 'doi:10.1101/2023.06.05.543757'
-if np_dataset=='optic-lobe:v1.0':
+if np_dataset=='optic-lobe:v1.0.1':
     data['ref'] = 'doi:10.1101/2024.04.16.589741'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
