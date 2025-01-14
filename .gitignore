@@ -5,11 +5,14 @@ bin/
 *.tmp
 *.tmp.obo
 *.tmp.owl
-*.tmp.json
+*.tmp.jso
+*pyc
 
 .github/token.txt
 np_token.txt
 
+src/ontology/my-venv
+src/ontology/my-venv/*
 src/ontology/mirror
 src/ontology/mirror/*
 src/ontology/reports/*

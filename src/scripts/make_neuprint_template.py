@@ -1,5 +1,5 @@
+from cypher_query import query_neo4j, auth, kb
 import neuprint
-from vfb_connect.neo.neo4j_tools import Neo4jConnect, dict_cursor
 import pandas as pd
 import sys
 
@@ -16,8 +16,6 @@ except FileNotFoundError:
 
 template_outfile = 'tmp/template.tsv'
 
-vfb_client = Neo4jConnect('http://kb.virtualflybrain.org', 'neo4j', 'vfb')
-
 if update:
     np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
     # get predicted neurotransmitters
@@ -29,7 +27,9 @@ if update:
              % str(cutoff))
     
     neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
-    neurotransmitters['NT_prob'] = neurotransmitters['NT_prob1'].fillna(neurotransmitters['NT_prob2'])
+    # use prob1, with NA filled to prob2 values - then infer dtype (float) - this will not be done by fillna in future
+    with pd.option_context('future.no_silent_downcasting', True):
+        neurotransmitters['NT_prob'] = neurotransmitters['NT_prob1'].fillna(neurotransmitters['NT_prob2']).infer_objects()
     neurotransmitters = neurotransmitters.drop(['NT_prob1', 'NT_prob2'], axis=1)
     neurotransmitters.to_csv(f'data/{vfb_site}_download.tsv', sep='\t')
 
@@ -45,9 +45,7 @@ query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
          'WHERE ((NOT EXISTS(n.deprecated)) OR (NOT n.deprecated[0]))'
          'RETURN n.iri AS iri, toInteger(r.accession[0]) AS bodyId' % vfb_site)
 
-q = vfb_client.commit_list([query])
-result = dict_cursor(q)
-vfb_ids = pd.DataFrame.from_records(result)
+vfb_ids = query_neo4j(query, url=kb, auth=auth)
 
 # merge nts with VFB IDs
 data = vfb_ids.join(neurotransmitters, 

@@ -1,4 +1,4 @@
-from vfb_connect.neo.neo4j_tools import Neo4jConnect, dict_cursor
+from cypher_query import query_neo4j, auth, kb
 import pandas as pd
 import sys
 
@@ -10,7 +10,6 @@ infile = sys.argv[3]
 
 template_outfile = 'tmp/template.tsv'
 neurotransmitters = pd.read_csv(infile, sep='\t', index_col='accession', low_memory=False)
-vfb_client = Neo4jConnect('http://kb.virtualflybrain.org', 'neo4j', 'vfb')
 
 neurotransmitters = neurotransmitters[neurotransmitters['pre']>=cutoff]
 neurotransmitters.rename({'conf_nt': 'NT', 'conf_nt_p': 'NT_prob'}, axis=1, inplace=True)
@@ -25,9 +24,7 @@ query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
          'WHERE ((NOT EXISTS(n.deprecated)) OR (NOT n.deprecated[0]))'
          'RETURN n.iri AS iri, toInteger(r.accession[0]) AS accession' % vfb_site)
 
-q = vfb_client.commit_list([query])
-result = dict_cursor(q)
-vfb_ids = pd.DataFrame.from_records(result)
+vfb_ids = query_neo4j(query, url=kb, auth=auth)
 
 # merge nts with VFB IDs
 data = vfb_ids.join(neurotransmitters, 
