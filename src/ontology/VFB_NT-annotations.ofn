@@ -7,13 +7,15 @@ Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
 
 
 Ontology(<http://virtualflybrain.org/data/VFB/OWL/VFB_NT.owl>
-Annotation(<http://purl.org/dc/elements/1.1/description> "An ontology of neurotransmitter predictions for VFB individual neurons, taken from manc:v1.0 dataset on neuprint."^^xsd:string)
-Annotation(<http://purl.org/dc/elements/1.1/title> "VFB Neurotransmitter Predictions"^^xsd:string)
 Annotation(<http://purl.org/dc/terms/contributor> "http://orcid.org/0000-0002-1373-1705")
+Annotation(<http://purl.org/dc/terms/description> "An ontology of neurotransmitter predictions for VFB individual neurons from EM datasets (see axioms for references)."^^xsd:string)
 Annotation(<http://purl.org/dc/terms/license> "https://creativecommons.org/licenses/by/4.0/"^^xsd:string)
+Annotation(<http://purl.org/dc/terms/title> "VFB Neurotransmitter Predictions"^^xsd:string)
 
-Declaration(AnnotationProperty(<http://purl.org/dc/elements/1.1/description>))
-Declaration(AnnotationProperty(<http://purl.org/dc/elements/1.1/title>))
+
+Declaration(AnnotationProperty(<http://purl.org/dc/terms/contributor>))
+Declaration(AnnotationProperty(<http://purl.org/dc/terms/description>))
 Declaration(AnnotationProperty(<http://purl.org/dc/terms/license>))
+Declaration(AnnotationProperty(<http://purl.org/dc/terms/title>))
 
 )
