@@ -2,6 +2,7 @@ id: VFB_NT
 title: "VFB Neurotransmitter Predictions"
 github_org: VirtualFlyBrain
 repo: vfb-neurotransmitter-predictions
+run_as_root: TRUE
 robot_report:
   custom_profile: TRUE
 namespaces: 

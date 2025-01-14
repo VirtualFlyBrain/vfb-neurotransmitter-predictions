@@ -58,8 +58,8 @@ ODK_TAG=${ODK_TAG:-latest}
 ODK_JAVA_OPTS=${ODK_JAVA_OPTS:--Xmx8G}
 ODK_DEBUG=${ODK_DEBUG:-no}
 
-ODK_USER_ID=${ODK_USER_ID:-$(id -u)}
-ODK_GROUP_ID=${ODK_GROUP_ID:-$(id -g)}
+ODK_USER_ID=${ODK_USER_ID:-0}
+ODK_GROUP_ID=${ODK_GROUP_ID:-0}
 
 # Convert OWLAPI_* environment variables to the OWLAPI as Java options
 # See http://owlcs.github.io/owlapi/apidocs_4/org/semanticweb/owlapi/model/parameters/ConfigurationOptions.html
