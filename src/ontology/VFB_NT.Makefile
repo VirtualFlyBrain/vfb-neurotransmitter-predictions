@@ -33,7 +33,7 @@ $(SRC): get_query_script install_requirements | $(TMPDIR)
 	my-venv/bin/python3 $(SCRIPTSDIR)/make_neuprint_template.py $(CUTOFF) $(NEUPRINT_TOKEN_FILE) 'optic-lobe:v1.0.1' 'neuprint_JRC_OpticLobe_v1_0_1' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/OL_nt_predictions.owl &&\
-	my-venv/bin/python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'neuprint_JRC_Hemibrain_1point1'  'data/hemibrain_predictions.tsv' &&\
+	my-venv/bin/python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'neuprint_JRC_Hemibrain_1point2point1'  'data/hemibrain_predictions.tsv' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/hb_nt_predictions.owl &&\
 	my-venv/bin/python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'flywire783' 'data/flywire_predictions.tsv' &&\
