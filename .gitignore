@@ -15,7 +15,6 @@ src/ontology/my-venv
 src/ontology/my-venv/*
 src/ontology/mirror
 src/ontology/mirror/*
-src/ontology/reports/*
 src/ontology/VFB_NT.owl
 src/ontology/VFB_NT.obo
 src/ontology/VFB_NT.json
