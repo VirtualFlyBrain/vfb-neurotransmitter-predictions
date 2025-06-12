@@ -9,6 +9,7 @@ namespaces:
   - http://virtualflybrain.org/reports/VFB_
 primary_release: full
 gzip_main: TRUE
+manage_import_declarations: false
 export_formats:
   - owl
 edit_format: owl
