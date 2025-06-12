@@ -76,9 +76,7 @@ np_token.txt
 src/ontology/my-venv
 src/ontology/my-venv/*
 
-
-
-
+!src/ontology/reports/*
 
 src/ontology/VFB_NT-edit.owl
 VFB_NT-base.owl
