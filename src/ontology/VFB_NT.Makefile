@@ -52,3 +52,8 @@ $(ONT).owl: $(ONT)-full.owl
 	grep -v owl:versionIRI $< > $@.tmp.owl
 	$(ROBOT) annotate -i $@.tmp.owl --ontology-iri http://virtualflybrain.org/data/VFB/OWL/VFB_NT.owl \
 		convert -o $@.tmp.owl && mv $@.tmp.owl $@
+
+# make ontologyterms.txt report
+robot_reports: $(TMPDIR)/ontologyterms.txt
+	sort -o $< $<
+	cp $< $(REPORTDIR)/ontologyterms.txt
