@@ -13,7 +13,9 @@ neurotransmitters = pd.read_csv(infile, sep='\t', index_col='accession', low_mem
 
 neurotransmitters = neurotransmitters[neurotransmitters['pre']>=cutoff]
 neurotransmitters.rename({'conf_nt': 'NT', 'conf_nt_p': 'NT_prob'}, axis=1, inplace=True)
-neurotransmitters.drop(['pre', 'top_nt', 'top_nt_p', 'acetylcholine', 'glutamate', 'gaba', 'dopamine', 'serotonin', 'octopamine'], axis=1, inplace=True)
+neurotransmitters.drop(['pre', 'top_nt', 'top_nt_p', 'acetylcholine', 'glutamate', 'gaba', 'dopamine', 'serotonin', 'octopamine', 'histamine', 'tyramine', 'supervoxel_id', 'position'], axis=1, inplace=True, errors='ignore')
+
+neurotransmitters = neurotransmitters.drop_duplicates()
 
 # drop anything that is missing a confidence value
 neurotransmitters = neurotransmitters[~neurotransmitters['NT_prob'].isna()]
@@ -40,7 +42,9 @@ nt_dict = {'acetylcholine':'GO:0014055',
            'gaba':'GO:0061534', 
            'dopamine':'GO:0061527', 
            'serotonin':'GO:0060096', 
-           'octopamine':'GO:0061540'}
+           'octopamine':'GO:0061540', 
+           'histamine':'GO:0061538', 
+           'tyramine':'GO:0061546'}
 data = data[data['NT'].isin(nt_dict.keys())]
 data['NT'] = data['NT'].map(nt_dict)
 
@@ -49,6 +53,8 @@ data['NT'] = data['NT'].map(nt_dict)
 data['type'] = 'owl:Class'
 if vfb_site == 'neuprint_JRC_Hemibrain_1point1' or 'flywire783':
     data['ref'] = 'FlyBase:FBrf0259490'
+elif vfb_site == 'BANC626':
+    data['ref'] == 'doi:10.1101/2025.07.31.667571'
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 

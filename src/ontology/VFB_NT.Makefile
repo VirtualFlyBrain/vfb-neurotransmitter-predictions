@@ -39,6 +39,9 @@ $(SRC): get_query_script install_requirements | $(TMPDIR)
 	my-venv/bin/python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'flywire783' 'data/flywire_predictions.tsv' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/fw_nt_predictions.owl &&\
+	my-venv/bin/python3 $(SCRIPTSDIR)/make_template_from_file.py $(CUTOFF) 'BANC626' 'data/banc_predictions.tsv' &&\
+	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
+		--output $(TMPDIR)/banc_nt_predictions.owl &&\
 	$(ROBOT) merge --inputs "$(TMPDIR)/*_nt_predictions.owl" \
 		--input VFB_NT-annotations.ofn \
 		--output $(SRC) &&\
