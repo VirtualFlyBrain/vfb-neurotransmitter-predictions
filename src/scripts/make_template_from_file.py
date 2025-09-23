@@ -17,8 +17,11 @@ neurotransmitters.drop(['pre', 'top_nt', 'top_nt_p', 'acetylcholine', 'glutamate
 
 neurotransmitters = neurotransmitters.drop_duplicates()
 
-# drop anything that is missing a confidence value
+# drop anything that is missing a confidence value, adjust to % and round down
 neurotransmitters = neurotransmitters[~neurotransmitters['NT_prob'].isna()]
+if all(neurotransmitters['NT_prob'] <= 1):
+    neurotransmitters['NT_prob'] = neurotransmitters['NT_prob']*100
+neurotransmitters['NT_prob'] = neurotransmitters['NT_prob'].apply(int) / 100
 
 # get VFB individuals
 query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
