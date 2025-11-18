@@ -9,20 +9,16 @@ vfb_site = sys.argv[2]
 infile = sys.argv[3]
 
 template_outfile = 'tmp/template.tsv'
-neurotransmitters = pd.read_csv(infile, sep='\t', index_col='accession', low_memory=False)
-
+neurotransmitters = pd.read_csv(infile, sep='\t', low_memory=False)
 neurotransmitters = neurotransmitters[neurotransmitters['pre']>=cutoff]
 neurotransmitters.rename({'conf_nt': 'NT', 'conf_nt_p': 'NT_prob'}, axis=1, inplace=True)
 neurotransmitters.drop(['pre', 'top_nt', 'top_nt_p', 'acetylcholine', 'glutamate', 'gaba', 'dopamine', 'serotonin', 'octopamine', 'histamine', 'tyramine', 'supervoxel_id', 'position'], axis=1, inplace=True, errors='ignore')
-
-neurotransmitters = neurotransmitters.drop_duplicates()
-
 # drop anything that is missing a confidence value, adjust to % and round down
 neurotransmitters = neurotransmitters[~neurotransmitters['NT_prob'].isna()]
 if all(neurotransmitters['NT_prob'] <= 1):
     neurotransmitters['NT_prob'] = neurotransmitters['NT_prob']*100
 neurotransmitters['NT_prob'] = neurotransmitters['NT_prob'].apply(int) / 100
-
+neurotransmitters = neurotransmitters.drop_duplicates()
 # get VFB individuals
 query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
          '(s:Site {short_form:"%s"}) '
@@ -32,7 +28,7 @@ query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
 vfb_ids = query_neo4j(query, url=kb, auth=auth)
 
 # merge nts with VFB IDs
-data = vfb_ids.join(neurotransmitters, 
+data = vfb_ids.merge(neurotransmitters, 
                          on='accession', how='inner', 
                          validate='one_to_one'
                         ).reset_index(drop=True)

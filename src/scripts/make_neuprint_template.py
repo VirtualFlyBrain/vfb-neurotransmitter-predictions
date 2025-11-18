@@ -26,12 +26,12 @@ if update:
              'ORDER BY bodyId'
              % str(cutoff))
     
-    neurotransmitters = np_client.fetch_custom(query).set_index('bodyId')
+    neurotransmitters = np_client.fetch_custom(query)
     # use prob1, with NA filled to prob2 values - then infer dtype (float) - this will not be done by fillna in future
     with pd.option_context('future.no_silent_downcasting', True):
         neurotransmitters['NT_prob'] = neurotransmitters['NT_prob1'].fillna(neurotransmitters['NT_prob2']).infer_objects()
     neurotransmitters = neurotransmitters.drop(['NT_prob1', 'NT_prob2'], axis=1)
-    neurotransmitters.to_csv(f'data/{vfb_site}_download.tsv', sep='\t')
+    neurotransmitters.to_csv(f'data/{vfb_site}_download.tsv', sep='\t', index=None)
 
 else:
     neurotransmitters = pd.read_csv(f'data/{vfb_site}_download.tsv', sep='\t', index_col='bodyId')
@@ -51,7 +51,7 @@ query = ('MATCH (n:Individual)-[r:database_cross_reference|hasDbXref]->'
 vfb_ids = query_neo4j(query, url=kb, auth=auth)
 
 # merge nts with VFB IDs
-data = vfb_ids.join(neurotransmitters, 
+data = vfb_ids.merge(neurotransmitters, 
                          on='bodyId', how='inner', 
                          validate='one_to_one'
                         ).reset_index(drop=True)
