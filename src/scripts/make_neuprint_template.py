@@ -73,7 +73,7 @@ data['type'] = 'owl:Class'
 if np_dataset.startswith('manc:'):
     data['ref'] = 'doi:10.7554/eLife.97769.1'
 if np_dataset.startswith('optic-lobe:'):
-    data['ref'] = 'doi:10.1101/2024.04.16.589741'
+    data['ref'] = 'FlyBase:FBrf0262545'
 if np_dataset.startswith('male-cns:'):
     data['ref'] = 'doi:10.1101/2025.10.09.680999'
 
