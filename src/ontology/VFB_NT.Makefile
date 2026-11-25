@@ -4,8 +4,8 @@
 ## changes here rather than in the main Makefile
 
 # accessing neuprint requires a token - save in a single line in a text file and specify path with this variable
-# if no token is found, neuprint data will not be updated
-NEUPRINT_TOKEN_FILE = '~/neuprint_token.txt'
+# the build fails if no token is found
+NEUPRINT_TOKEN_FILE = '../../np_token.txt'
 # threshold number of presynapses (we do not filter by probability) 
 # Eckstein (2024) analysis filters to >=100 already
 CUTOFF = 100
@@ -27,7 +27,7 @@ get_query_script:
 
 
 $(SRC): get_query_script install_requirements | $(TMPDIR)
-	my-venv/bin/python3 $(SCRIPTSDIR)/make_neuprint_template.py $(CUTOFF) $(NEUPRINT_TOKEN_FILE) 'manc:v1.2.1' 'neuprint_JRC_Manc' &&\
+	my-venv/bin/python3 $(SCRIPTSDIR)/make_neuprint_template.py $(CUTOFF) $(NEUPRINT_TOKEN_FILE) 'manc:v1.2.3' 'neuprint_JRC_Manc_1_2_3' &&\
 	$(ROBOT) template --template $(TMPDIR)/template.tsv --prefix "custom: http://n2o.neo/custom/" \
 		--output $(TMPDIR)/manc_nt_predictions.owl &&\
 	my-venv/bin/python3 $(SCRIPTSDIR)/make_neuprint_template.py $(CUTOFF) $(NEUPRINT_TOKEN_FILE) 'optic-lobe:v1.0.1' 'neuprint_JRC_OpticLobe_v1_0_1' &&\
