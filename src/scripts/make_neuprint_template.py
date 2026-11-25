@@ -8,34 +8,38 @@ cutoff = float(sys.argv[1])
 np_dataset = sys.argv[3]
 vfb_site = sys.argv[4]
 
-token_file = os.path.expanduser(sys.argv[2])
-try:
-    with open(token_file) as file:
-        token = file.read().strip()
-except FileNotFoundError:
-    sys.exit(f'neuPrint token file not found: {token_file}')
-if not token:
-    sys.exit(f'neuPrint token file is empty: {token_file}')
-
 template_outfile = 'tmp/template.tsv'
 # latest download only, named without version (e.g. data/manc_download.tsv)
 download_file = f'data/{np_dataset.split(":")[0]}_download.tsv'
 
-np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
-# get predicted neurotransmitters
-# confidence has different name in manc and ol...
-query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
-         'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob1, '
-         'n.predictedNtConfidence AS NT_prob2 '
-         'ORDER BY bodyId'
-         % str(cutoff))
+if sys.argv[2] == 'OFFLINE':
+    # CI: build from the committed download instead of querying neuPrint
+    neurotransmitters = pd.read_csv(download_file, sep='\t')
+else:
+    token_file = os.path.expanduser(sys.argv[2])
+    try:
+        with open(token_file) as file:
+            token = file.read().strip()
+    except FileNotFoundError:
+        sys.exit(f'neuPrint token file not found: {token_file}')
+    if not token:
+        sys.exit(f'neuPrint token file is empty: {token_file}')
 
-neurotransmitters = np_client.fetch_custom(query)
-# use prob1, with NA filled to prob2 values - then infer dtype (float) - this will not be done by fillna in future
-with pd.option_context('future.no_silent_downcasting', True):
-    neurotransmitters['NT_prob'] = neurotransmitters['NT_prob1'].fillna(neurotransmitters['NT_prob2']).infer_objects()
-neurotransmitters = neurotransmitters.drop(['NT_prob1', 'NT_prob2'], axis=1)
-neurotransmitters.to_csv(download_file, sep='\t', index=None)
+    np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
+    # get predicted neurotransmitters
+    # confidence has different name in manc and ol...
+    query = ('MATCH (n:Neuron) WHERE EXISTS(n.predictedNt) AND n.pre >= %s '
+             'RETURN n.bodyId AS bodyId, n.predictedNt AS NT, n.predictedNtProb AS NT_prob1, '
+             'n.predictedNtConfidence AS NT_prob2 '
+             'ORDER BY bodyId'
+             % str(cutoff))
+
+    neurotransmitters = np_client.fetch_custom(query)
+    # use prob1, with NA filled to prob2 values - then infer dtype (float) - this will not be done by fillna in future
+    with pd.option_context('future.no_silent_downcasting', True):
+        neurotransmitters['NT_prob'] = neurotransmitters['NT_prob1'].fillna(neurotransmitters['NT_prob2']).infer_objects()
+    neurotransmitters = neurotransmitters.drop(['NT_prob1', 'NT_prob2'], axis=1)
+    neurotransmitters.to_csv(download_file, sep='\t', index=None)
 
 # drop anything that is missing a confidence value, adjust to % and round down
 neurotransmitters = neurotransmitters[~neurotransmitters['NT_prob'].isna()]
