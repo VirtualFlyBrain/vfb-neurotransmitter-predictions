@@ -67,7 +67,7 @@ if 'ver_NT' in neurotransmitters.columns:
         if pd.isna(ver):
             return True  # ver_NT null → keep the row
         options = [x.strip() for x in str(ver).split(',')]
-        return row['NT'] not in options
+        return row['NT'] in options
 
     neurotransmitters = neurotransmitters[neurotransmitters.apply(keep, axis=1)]
 
@@ -102,10 +102,12 @@ data['NT'] = data['NT'].map(nt_dict)
 
 # make template
 data['type'] = 'owl:Class'
-if vfb_site == 'neuprint_JRC_Hemibrain_1point1' or 'flywire783':
+if vfb_site.startswith('neuprint_JRC_Hemibrain') or vfb_site.startswith('flywire'):
     data['ref'] = 'FlyBase:FBrf0259490'
-elif vfb_site == 'BANC888':
-    data['ref'] == 'doi:10.1038/s41586-026-10735-w.'
+elif vfb_site.startswith('BANC'):
+    data['ref'] = 'doi:10.1038/s41586-026-10735-w'
+else:
+    raise ValueError(f'No reference set for site {vfb_site}')
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 

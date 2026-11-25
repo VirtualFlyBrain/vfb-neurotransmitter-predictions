@@ -1,22 +1,30 @@
 from cypher_query import query_neo4j, auth, kb
 import neuprint
 import pandas as pd
+import os
 import sys
 
 cutoff = float(sys.argv[1])
 np_dataset = sys.argv[3]
 vfb_site = sys.argv[4]
 
-try:
-    with open(sys.argv[2]) as file:
-        token = file.read()
-    update = True
-except FileNotFoundError:
-    update = False
-
 template_outfile = 'tmp/template.tsv'
+# latest download only, named without version (e.g. data/manc_download.tsv)
+download_file = f'data/{np_dataset.split(":")[0]}_download.tsv'
 
-if update:
+if sys.argv[2] == 'OFFLINE':
+    # CI: build from the committed download instead of querying neuPrint
+    neurotransmitters = pd.read_csv(download_file, sep='\t')
+else:
+    token_file = os.path.expanduser(sys.argv[2])
+    try:
+        with open(token_file) as file:
+            token = file.read().strip()
+    except FileNotFoundError:
+        sys.exit(f'neuPrint token file not found: {token_file}')
+    if not token:
+        sys.exit(f'neuPrint token file is empty: {token_file}')
+
     np_client = neuprint.Client('https://neuprint.janelia.org', dataset=np_dataset, token=token)
     # get predicted neurotransmitters
     # confidence has different name in manc and ol...
@@ -25,16 +33,13 @@ if update:
              'n.predictedNtConfidence AS NT_prob2 '
              'ORDER BY bodyId'
              % str(cutoff))
-    
+
     neurotransmitters = np_client.fetch_custom(query)
     # use prob1, with NA filled to prob2 values - then infer dtype (float) - this will not be done by fillna in future
     with pd.option_context('future.no_silent_downcasting', True):
         neurotransmitters['NT_prob'] = neurotransmitters['NT_prob1'].fillna(neurotransmitters['NT_prob2']).infer_objects()
     neurotransmitters = neurotransmitters.drop(['NT_prob1', 'NT_prob2'], axis=1)
-    neurotransmitters.to_csv(f'data/{vfb_site}_download.tsv', sep='\t', index=None)
-
-else:
-    neurotransmitters = pd.read_csv(f'data/{vfb_site}_download.tsv', sep='\t', index_col='bodyId')
+    neurotransmitters.to_csv(download_file, sep='\t', index=None)
 
 # drop anything that is missing a confidence value, adjust to % and round down
 neurotransmitters = neurotransmitters[~neurotransmitters['NT_prob'].isna()]
@@ -72,10 +77,12 @@ data['type'] = 'owl:Class'
 
 if np_dataset.startswith('manc:'):
     data['ref'] = 'doi:10.7554/eLife.97769.1'
-if np_dataset.startswith('optic-lobe:'):
+elif np_dataset.startswith('optic-lobe:'):
     data['ref'] = 'FlyBase:FBrf0262545'
-if np_dataset.startswith('male-cns:'):
+elif np_dataset.startswith('male-cns:'):
     data['ref'] = 'doi:10.1101/2025.10.09.680999'
+else:
+    raise ValueError(f'No reference set for dataset {np_dataset}')
 
 template_strings = pd.DataFrame({'iri': ['ID'], 'type': ['TYPE'],
                                  'NT': ['SC RO:0002215 some %'], 
